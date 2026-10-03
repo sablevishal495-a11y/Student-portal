@@ -1,0 +1,23 @@
+{
+  "name": "edusphere-institute-portal",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "npm --workspace backend run dev",
+    "dev:web": "npm --workspace frontend run dev",
+    "seed": "npm --workspace backend run seed",
+    "build": "npm --workspace frontend run build",
+    "start": "npm --workspace backend start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

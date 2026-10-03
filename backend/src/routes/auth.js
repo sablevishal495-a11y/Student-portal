@@ -1,0 +1,5 @@
+import express from "express";import bcrypt from "bcryptjs";import {db,getStudentByUserId,getTeacherByUserId} from "../db.js";import {authRequired,signToken} from "../middleware/auth.js";
+const router=express.Router();
+router.post("/login",(req,res)=>{const{email,password}=req.body??{};if(!email||!password)return res.status(400).json({message:"Email and password are required."});const u=db.prepare("SELECT * FROM users WHERE lower(email)=lower(?)").get(email.trim());if(!u||!bcrypt.compareSync(password,u.password_hash)||!u.is_active)return res.status(401).json({message:"Invalid email or password."});const profile=u.role==="STUDENT"?getStudentByUserId(u.id):u.role==="TEACHER"?getTeacherByUserId(u.id):null;res.json({token:signToken(u),user:{id:u.id,name:u.name,email:u.email,role:u.role,phone:u.phone,profile}})});
+router.get("/me",authRequired,(req,res)=>{const profile=req.user.role==="STUDENT"?getStudentByUserId(req.user.id):req.user.role==="TEACHER"?getTeacherByUserId(req.user.id):null;res.json({user:{...req.user,profile}})});
+export default router;
